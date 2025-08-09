@@ -21,14 +21,28 @@ class WordCounterViewController: UIViewController {
         label.textColor = .systemBlue
         return label
     }()
+    
+    let viewModel = WordCounterViewModel()
      
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
         setupTextView()
+        
+        viewModel.closure = {
+            self.countLabel.text = self.viewModel.resultOutputText
+        }
     }
-     
+}
+ 
+extension WordCounterViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        viewModel.updateCharacter = textView.text
+    }
+}
+
+extension WordCounterViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
@@ -53,16 +67,5 @@ class WordCounterViewController: UIViewController {
     
     private func setupTextView() {
         textView.delegate = self
-    }
-     
-    private func updateCharacterCount() {
-        let count = textView.text.count
-        countLabel.text = "현재까지 \(count)글자 작성중"
-    }
-}
- 
-extension WordCounterViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        updateCharacterCount()
     }
 }
