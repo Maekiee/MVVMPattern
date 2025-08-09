@@ -1,12 +1,7 @@
 import UIKit
 import SnapKit
 
-enum BirthError: Error {
-    case rangeYear
-    case rangeMonth
-    case rangeDay
-    case wrongInput
-}
+
 
 class BirthDayViewController: UIViewController {
     let yearTextField: UITextField = {
@@ -49,12 +44,14 @@ class BirthDayViewController: UIViewController {
         button.layer.cornerRadius = 8
         return button
     }()
-    let resultLabel: UILabel = {
+    var resultLabel: UILabel = {
         let label = UILabel()
         label.text = "여기에 결과를 보여주세요"
         label.textAlignment = .center
         return label
     }()
+    
+    let viewModel = BirthDayViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,8 +62,30 @@ class BirthDayViewController: UIViewController {
         textFieldGeneric(yearTextField)
         textFieldGeneric(monthTextField)
         textFieldGeneric(dayTextField)
+        
+        viewModel.closure = {
+            self.resultLabel.text = self.viewModel.resultOutputString
+        }
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
+    @objc func resultButtonTapped() {
+        view.endEditing(true)
+        viewModel.clickTapped = [
+            yearTextField.text,
+            monthTextField.text,
+            dayTextField.text,
+        ]
+    }
+    
+
+}
+
+
+extension BirthDayViewController {
     func configureHierarchy() {
         view.addSubview(yearTextField)
         view.addSubview(yearLabel)
@@ -125,85 +144,5 @@ class BirthDayViewController: UIViewController {
             make.horizontalEdges.equalToSuperview().inset(20)
             make.height.equalTo(44)
         }
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
-    }
-    
-    
-    func calculateDaysFromString(_ dateString: String) -> Int? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-M-d"
-        
-        guard let date = formatter.date(from: dateString) else {
-            return nil
-        }
-        
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.day], from: date, to: Date())
-        return components.day ?? 0
-    }
-
-    
-    @objc func resultButtonTapped() {
-        view.endEditing(true)
-        do {
-            let _ = try validateInputValue()
-            if let year = yearTextField.text ,
-               let month = monthTextField.text,
-               let day = dayTextField.text {
-                
-                let birthDay = "\(year)-\(month)-\(day)"
-                if let daysPassed = calculateDaysFromString(birthDay) {
-                    resultLabel.text = "오늘 날짜 기준으로 D+\(daysPassed) 일째 입니다."
-                }
-                
-            }
-        } catch {
-            switch error {
-            case .rangeYear:
-                showAlert(tip: "정확한 년도를 입력해 주세요")
-            case .rangeMonth:
-                showAlert(tip: "정확한 월을 입력해 주세요")
-            case .rangeDay:
-                showAlert(tip: "정확한 일을 입력해 주세요")
-            case .wrongInput:
-                showAlert(tip: "입력값을 확인해 주세요")
-            }
-        }
-    }
-    
-    private func validateInputValue() throws(BirthError) -> Bool {
-        // 년
-        if let yearValue = Int(yearTextField.text!) {
-            
-            guard 1925...2024 ~= yearValue else {
-                throw .rangeYear
-            }
-            
-        } else {
-            throw .wrongInput
-        }
-        
-        // 월
-        if let monthValue = Int(monthTextField.text!) {
-            guard 1...12 ~= monthValue else {
-                throw .rangeMonth
-            }
-        } else {
-            throw .wrongInput
-        }
-        
-        // 일
-        if let dayValue = Int(dayTextField.text!) {
-            guard 1...31 ~= dayValue else {
-                throw .rangeDay
-            }
-        } else {
-            throw .wrongInput
-        }
-        
-        return true
     }
 }
