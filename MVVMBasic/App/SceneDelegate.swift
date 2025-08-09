@@ -8,6 +8,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
+        
         let tabBarController = UITabBarController()
         // 나이탭
         let ageVC = AgeViewController()
@@ -25,11 +26,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let currencyVC = CurrencyViewController()
         currencyVC.tabBarItem = UITabBarItem(title: "환율", image: UIImage(systemName: "sterlingsign.arrow.trianglehead.counterclockwise.rotate.90"), tag: 4)
         
+        let nav = UINavigationController(rootViewController: OnboardingViewController())
+        
         tabBarController.viewControllers = [ageVC, bmiVC, birthDayVC, wordCounterVC, currencyVC]
         tabBarController.tabBar.tintColor = .systemBlue
         tabBarController.tabBar.unselectedItemTintColor = .systemGray
         
-        window?.rootViewController = tabBarController
+        
+        
+//        window?.rootViewController = tabBarController
+        window?.rootViewController = nav
         window?.makeKeyAndVisible()
     }
 
