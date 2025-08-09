@@ -1,7 +1,6 @@
 import UIKit
 import SnapKit
 
-
 class CreateProfileViewController: UIViewController {
     let profileImage: UIImageView = {
         let imageView = UIImageView()
@@ -9,6 +8,7 @@ class CreateProfileViewController: UIViewController {
         imageView.layer.borderColor = UIColor.completeButtonColor.cgColor
         imageView.layer.borderWidth = 4
         imageView.clipsToBounds = false
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
@@ -66,28 +66,72 @@ class CreateProfileViewController: UIViewController {
         backgroundColor: .white,
         titleColor: .gray
     )
-    
+    let SButton = UICircleButton(
+        title: "S",
+        backgroundColor: .white,
+        titleColor: .gray
+    )
+    let NButton = UICircleButton(
+        title: "N",
+        backgroundColor: .white,
+        titleColor: .gray
+    )
+    let TButton = UICircleButton(
+        title: "T",
+        backgroundColor: .white,
+        titleColor: .gray
+    )
+    let FButton = UICircleButton(
+        title: "F",
+        backgroundColor: .white,
+        titleColor: .gray
+    )
+    let JButton = UICircleButton(
+        title: "J",
+        backgroundColor: .white,
+        titleColor: .gray
+    )
+    let PButton = UICircleButton(
+        title: "P",
+        backgroundColor: .white,
+        titleColor: .gray
+    )
     let horizonStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        
+        stackView.spacing = 8
+        stackView.distribution = .fillEqually
         return stackView
     }()
     
-    
-    
-    let verticalStackView: UIStackView = {
+    let firstStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 8
         stackView.distribution = .fillEqually
         return stackView
     }()
-    
-    
-    
-    
-    
+    let secondStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.distribution = .fillEqually
+        return stackView
+    }()
+    let thirdStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.distribution = .fillEqually
+        return stackView
+    }()
+    let lastStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.distribution = .fillEqually
+        return stackView
+    }()
     
 
     override func viewDidLoad() {
@@ -96,8 +140,12 @@ class CreateProfileViewController: UIViewController {
         configLayout()
         configView()
         
-        [EButton, IButton].forEach { verticalStackView.addArrangedSubview($0)
-        }
+        [firstStackView, secondStackView, thirdStackView, lastStackView].forEach { horizonStackView.addArrangedSubview($0)}
+        
+        [EButton, IButton].forEach { firstStackView.addArrangedSubview($0) }
+        [SButton, NButton].forEach { secondStackView.addArrangedSubview($0) }
+        [TButton, FButton].forEach { thirdStackView.addArrangedSubview($0) }
+        [JButton, PButton].forEach { lastStackView.addArrangedSubview($0) }
         
     }
     
@@ -110,6 +158,12 @@ class CreateProfileViewController: UIViewController {
     
     @objc func popButtonTapped() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func pushTapped() {
+        let vc = ProfileImageSettingViewController()
+        navigationController?.pushViewController(vc, animated: true)
+        print(#function)
     }
 }
 
@@ -124,7 +178,7 @@ extension CreateProfileViewController {
         view.addSubview(validateStateLabel)
         view.addSubview(mbtiTitleLabel)
         
-        view.addSubview(verticalStackView)
+        view.addSubview(horizonStackView)
     }
     
     private func configLayout() {
@@ -162,14 +216,12 @@ extension CreateProfileViewController {
             make.leading.leading.equalToSuperview().offset(20)
         }
         
-        verticalStackView.snp.makeConstraints { make in
+        horizonStackView.snp.makeConstraints { make in
             make.top.equalTo(validateStateLabel.snp.bottom).offset(60)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(50)
+            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-20)
+            make.width.equalTo(224)
             make.height.equalTo(108)
         }
-        
-        
         
         completeButton.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(32)
@@ -181,13 +233,14 @@ extension CreateProfileViewController {
     
     private func configView() {
         view.backgroundColor = .white
-        
         navigationItem.title = "PROFILE SETTING"
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "chevron.left"),
             style: .plain,
             target: self,
             action: #selector(popButtonTapped))
-        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(pushTapped))
+        profileImage.addGestureRecognizer(tapGesture)
     }
+    
 }
