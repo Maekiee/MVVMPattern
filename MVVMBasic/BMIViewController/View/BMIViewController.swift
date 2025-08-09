@@ -8,6 +8,8 @@ enum BMIValidationError: Error {
 }
 
 class BMIViewController: UIViewController {
+    let viewModel = BMIViewModel()
+    
     let heightTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "키를 입력해주세요"
@@ -37,7 +39,17 @@ class BMIViewController: UIViewController {
         customCornerGeneric(resultButton)
         textFieldGeneric(heightTextField)
         textFieldGeneric(weightTextField)
+        
         resultButton.addTarget(self, action: #selector(resultButtonTapped), for: .touchUpInside)
+        
+        viewModel.closureText = {
+            self.resultLabel.text = self.viewModel.resultOutputText
+           
+        }
+        
+//        viewModel.closureAlert = {
+//            self.showAlert(tip: self.viewModel.alertMessage)
+//        }
     }
     
     func configureHierarchy() {
@@ -79,45 +91,7 @@ class BMIViewController: UIViewController {
     
     @objc func resultButtonTapped() {
         view.endEditing(true)
-        
-        do {
-            let _ = try validateInputValue()
-        } catch {
-            switch error {
-            case .emptyValue:
-                showAlert(tip: "값을 입력해주세요")
-            case .stringFailed:
-                showAlert(tip: "유효한 값을 입력해 주세요")
-            case .rangeHeight:
-                showAlert(tip: "정확한 키를 입력해주세요")
-            case .rangeWeight:
-                showAlert(tip: "정확한 몸무게를 입력해주세요")
-            }
-        }
-    }
-    
-    private func validateInputValue() throws(BMIValidationError) -> Bool {
-        
-        guard !(heightTextField.text!.isEmpty) || !(weightTextField.text!.isEmpty) else {
-            throw .emptyValue
-        }
-        
-        guard let weightDouble = Double(weightTextField.text!), let heightDouble = Double(heightTextField.text!) else {
-            throw .emptyValue
-        }
-        
-        guard Double(heightTextField.text!) != nil || Double(weightTextField.text!) != nil else {
-            throw .stringFailed
-        }
-        
-        guard 100.0...200.0 ~= heightDouble else {
-            throw .rangeHeight
-        }
-        
-        guard 30.0...200.0 ~= weightDouble  else {
-            throw .rangeWeight
-        }
-        
-        return true
+        viewModel.heightInputText = heightTextField.text
+        viewModel.weightInputText = weightTextField.text
     }
 }

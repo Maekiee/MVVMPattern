@@ -35,10 +35,7 @@ class AgeViewModel {
         }
     }
     
-    
-    
     private func validateInputValue() throws -> Bool {
-        
         guard !(ageInputField.isEmpty) else {
             throw ValidationAgeError.emptyValue
         }
