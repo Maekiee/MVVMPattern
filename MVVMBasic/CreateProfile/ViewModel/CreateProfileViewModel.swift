@@ -18,6 +18,14 @@ class CreateProfileViewModel {
         }
     }
     
+    var selectedButtonTag: UICircleButton? {
+        didSet {
+            changeButtonColor()
+        }
+    }
+    
+    var mbtiButtonDict: [Int: UICircleButton] = [:]
+    
     var outputColor: Bool = false {
         didSet {
             closure?()
@@ -28,6 +36,20 @@ class CreateProfileViewModel {
         didSet {
             checkUserName()
         }
+    }
+    
+    private func changeButtonColor() {
+        guard let button = selectedButtonTag else { return }
+        let pairButtonTag = button.tag < 4 ? button.tag + 4 : button.tag - 4
+        
+        if let pairButton = mbtiButtonDict[pairButtonTag] {
+            if pairButton.isSelected {
+                pairButton.isSelected = false
+            }
+        }
+        
+        selectedButtonTag?.isSelected.toggle()
+        
     }
     
     private func checkUserName() {

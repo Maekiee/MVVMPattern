@@ -15,6 +15,22 @@ class UICircleButton: UIButton {
         config.background.strokeWidth = 1
         config.background.cornerRadius = 25
         self.configuration = config
+        
+        self.configurationUpdateHandler = { button in
+            var updateConfig = button.configuration
+            
+            if button.isSelected {
+                updateConfig?.baseBackgroundColor = .systemBlue
+                updateConfig?.baseForegroundColor = .white
+                updateConfig?.background.strokeWidth = 0
+            } else {
+                updateConfig?.baseBackgroundColor = .white
+                updateConfig?.baseForegroundColor = .gray
+                updateConfig?.background.strokeWidth = 1
+                updateConfig?.background.strokeColor = .gray
+            }
+            button.configuration = updateConfig
+        }
     }
     
     override init(frame: CGRect) {

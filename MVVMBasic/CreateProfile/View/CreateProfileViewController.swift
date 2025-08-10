@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 enum MBTIType:String, CaseIterable {
-    case E, I, S, N, T, F, J, P
+    case E, S, T, J, I, N, F, P
     
     static var MBTIbtn: [UICircleButton] {
        
@@ -66,8 +66,6 @@ class CreateProfileViewController: UIViewController {
         button.backgroundColor = .disableButtonColor
         return button
     }()
-  
-    
     private func setMBTILayout() {
         let mbtiButtons = MBTIType.MBTIbtn
         
@@ -94,15 +92,16 @@ class CreateProfileViewController: UIViewController {
         }()
         
         mbtiButtons.enumerated().forEach { (index, button) in
+            button.tag = index
+            viewModel.mbtiButtonDict[button.tag] = button
             button.addTarget(self, action: #selector(selectedMBTI), for: .touchUpInside)
-            
             if index < 4 {
                 rowTopStackView.addArrangedSubview(button)
             } else {
                 rowBottomStackView.addArrangedSubview(button)
             }
         }
-        
+    
         [rowTopStackView, rowBottomStackView].forEach { contianerStackView.addArrangedSubview($0)
         }
         
@@ -115,7 +114,7 @@ class CreateProfileViewController: UIViewController {
             make.height.equalTo(108)
         }
     }
-
+  
     override func viewDidLoad() {
         super.viewDidLoad()
         configHeiraachy()
@@ -127,22 +126,17 @@ class CreateProfileViewController: UIViewController {
             self.validateStateLabel.text = self.viewModel.resultLabel
             self.validateStateLabel.textColor = self.viewModel.outputColor ? .allowedStateColor : .rejectStateColor
         }
-        
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         profileImage.layer.cornerRadius = profileImage.frame.height / 2
 //        cameraIcon.layer.cornerRadius = cameraIcon.frame.height / 2
-        
     }
     
+    
     @objc func selectedMBTI(_ sender: UICircleButton) {
-        var config = sender.configuration
-        config?.baseBackgroundColor = .systemBlue
-        config?.baseForegroundColor = .white
-        config?.background.strokeWidth = 0
-        sender.configuration = config
+        viewModel.selectedButtonTag = sender
     }
     
     @objc func popButtonTapped() {
@@ -152,7 +146,6 @@ class CreateProfileViewController: UIViewController {
     @objc func pushTapped() {
         let vc = ProfileImageSettingViewController()
         navigationController?.pushViewController(vc, animated: true)
-        print(#function)
     }
     
     @objc func textFieldDidChange(_ sender: UITextField) {
