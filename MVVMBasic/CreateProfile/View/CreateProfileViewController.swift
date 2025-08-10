@@ -2,6 +2,8 @@ import UIKit
 import SnapKit
 
 class CreateProfileViewController: UIViewController {
+    let viewModel = CreateProfileViewModel()
+    
     let profileImage: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .systemGray6
@@ -9,6 +11,7 @@ class CreateProfileViewController: UIViewController {
         imageView.layer.borderWidth = 4
         imageView.clipsToBounds = false
         imageView.isUserInteractionEnabled = true
+        imageView.image = UIImage(named: "profile_12")
         return imageView
     }()
     
@@ -36,7 +39,8 @@ class CreateProfileViewController: UIViewController {
     
     let validateStateLabel: UILabel = {
         let label = UILabel()
-        label.text = "teest label"
+        label.text = ""
+        label.font = .systemFont(ofSize: 13)
         return label
     }()
     
@@ -147,6 +151,11 @@ class CreateProfileViewController: UIViewController {
         [TButton, FButton].forEach { thirdStackView.addArrangedSubview($0) }
         [JButton, PButton].forEach { lastStackView.addArrangedSubview($0) }
         
+        viewModel.closure = {
+            self.validateStateLabel.text = self.viewModel.resultLabel
+            self.validateStateLabel.textColor = self.viewModel.outputColor ? .allowedStateColor : .rejectStateColor
+        }
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -164,6 +173,10 @@ class CreateProfileViewController: UIViewController {
         let vc = ProfileImageSettingViewController()
         navigationController?.pushViewController(vc, animated: true)
         print(#function)
+    }
+    
+    @objc func textFieldDidChange(_ sender: UITextField) {
+        viewModel.inputText = sender.text!
     }
 }
 
@@ -212,12 +225,12 @@ extension CreateProfileViewController {
         }
          
         mbtiTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(validateStateLabel.snp.bottom).offset(60)
+            make.top.equalTo(horizonDivider.snp.bottom).offset(72)
             make.leading.leading.equalToSuperview().offset(20)
         }
         
         horizonStackView.snp.makeConstraints { make in
-            make.top.equalTo(validateStateLabel.snp.bottom).offset(60)
+            make.top.equalTo(horizonDivider.snp.bottom).offset(72)
             make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-20)
             make.width.equalTo(224)
             make.height.equalTo(108)
@@ -241,6 +254,7 @@ extension CreateProfileViewController {
             action: #selector(popButtonTapped))
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(pushTapped))
         profileImage.addGestureRecognizer(tapGesture)
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
 }
