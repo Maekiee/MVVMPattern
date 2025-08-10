@@ -8,8 +8,6 @@ enum UserNameError: Error {
     case number
 }
 
-
-// 이미지, 엠비티아이, 닉네임 값이 모두 있으면 true 하나라도 없으면 falseㅅ
 class CreateProfileViewModel {
     var closure: (() -> Void)?
     var validateAllValue: (() -> Void)?

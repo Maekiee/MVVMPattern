@@ -153,7 +153,6 @@ final class CreateProfileViewController: UIViewController {
         vc.imageNamed = viewModel.setImage
         vc.isSelectedImage = { image in
             self.viewModel.setImage = image
-            
         }
         navigationController?.pushViewController(vc, animated: true)
     }
