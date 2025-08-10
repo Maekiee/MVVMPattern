@@ -82,6 +82,7 @@ extension ProfileImageSettingViewController: UICollectionViewDelegate, UICollect
         layout.itemSize = CGSize(width: cellWidth, height: cellWidth)
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
+
         layout.scrollDirection = .vertical
         return layout
     }

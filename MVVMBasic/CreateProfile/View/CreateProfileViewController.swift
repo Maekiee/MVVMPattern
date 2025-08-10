@@ -1,10 +1,23 @@
 import UIKit
 import SnapKit
 
+enum MBTIType:String, CaseIterable {
+    case E, I, S, N, T, F, J, P
+    
+    static var MBTIbtn: [UICircleButton] {
+       
+        MBTIType.allCases.map { item in
+           return UICircleButton(
+               title: item.rawValue,
+           )
+       }
+    }
+}
+
 class CreateProfileViewController: UIViewController {
     let viewModel = CreateProfileViewModel()
     
-    let profileImage: UIImageView = {
+    private let profileImage: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .systemGray6
         imageView.layer.borderColor = UIColor.completeButtonColor.cgColor
@@ -14,7 +27,6 @@ class CreateProfileViewController: UIViewController {
         imageView.image = UIImage(named: "profile_12")
         return imageView
     }()
-    
 //    let cameraIcon: UIImageView = {
 //        let imageView = UIImageView()
 //        imageView.image = UIImage(systemName: "camera.fill")
@@ -24,34 +36,29 @@ class CreateProfileViewController: UIViewController {
 //        imageView.backgroundColor = .completeButtonColor
 //        return imageView
 //    }()
-    
-    let textField: UITextField = {
+    private let textField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "닉네임을 입력해 주세요"
         return textField
     }()
-    
-    let horizonDivider: UIView = {
+    private let horizonDivider: UIView = {
         let view = UIView()
         view.backgroundColor = .gray
         return view
     }()
-    
-    let validateStateLabel: UILabel = {
+    private let validateStateLabel: UILabel = {
         let label = UILabel()
         label.text = ""
         label.font = .systemFont(ofSize: 13)
         return label
     }()
-    
-    let mbtiTitleLabel: UILabel = {
+    private let mbtiTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "MBTI"
         label.font = .boldSystemFont(ofSize: 20)
         return label
     }()
-    
-    let completeButton: UIButton = {
+    private let completeButton: UIButton = {
         let button = UIButton()
         button.setTitle("시작하기", for: .normal)
         button.layer.cornerRadius = 22
@@ -59,98 +66,63 @@ class CreateProfileViewController: UIViewController {
         button.backgroundColor = .disableButtonColor
         return button
     }()
+  
     
-    let EButton = UICircleButton(
-        title: "E",
-        backgroundColor: .white,
-        titleColor: .gray
-    )
-    let IButton = UICircleButton(
-        title: "I",
-        backgroundColor: .white,
-        titleColor: .gray
-    )
-    let SButton = UICircleButton(
-        title: "S",
-        backgroundColor: .white,
-        titleColor: .gray
-    )
-    let NButton = UICircleButton(
-        title: "N",
-        backgroundColor: .white,
-        titleColor: .gray
-    )
-    let TButton = UICircleButton(
-        title: "T",
-        backgroundColor: .white,
-        titleColor: .gray
-    )
-    let FButton = UICircleButton(
-        title: "F",
-        backgroundColor: .white,
-        titleColor: .gray
-    )
-    let JButton = UICircleButton(
-        title: "J",
-        backgroundColor: .white,
-        titleColor: .gray
-    )
-    let PButton = UICircleButton(
-        title: "P",
-        backgroundColor: .white,
-        titleColor: .gray
-    )
-    let horizonStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.spacing = 8
-        stackView.distribution = .fillEqually
-        return stackView
-    }()
-    
-    let firstStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 8
-        stackView.distribution = .fillEqually
-        return stackView
-    }()
-    let secondStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 8
-        stackView.distribution = .fillEqually
-        return stackView
-    }()
-    let thirdStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 8
-        stackView.distribution = .fillEqually
-        return stackView
-    }()
-    let lastStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 8
-        stackView.distribution = .fillEqually
-        return stackView
-    }()
-    
+    private func setMBTILayout() {
+        let mbtiButtons = MBTIType.MBTIbtn
+        
+        let contianerStackView: UIStackView = {
+            let stackView = UIStackView()
+            stackView.axis = .vertical
+            stackView.spacing = 8
+            stackView.distribution = .fillEqually
+            return stackView
+        }()
+        let rowTopStackView: UIStackView = {
+            let stackView = UIStackView()
+            stackView.axis = .horizontal
+            stackView.spacing = 8
+            stackView.distribution = .fillEqually
+            return stackView
+        }()
+        let rowBottomStackView: UIStackView = {
+            let stackView = UIStackView()
+            stackView.axis = .horizontal
+            stackView.spacing = 8
+            stackView.distribution = .fillEqually
+            return stackView
+        }()
+        
+        mbtiButtons.enumerated().forEach { (index, button) in
+            button.addTarget(self, action: #selector(selectedMBTI), for: .touchUpInside)
+            
+            if index < 4 {
+                rowTopStackView.addArrangedSubview(button)
+            } else {
+                rowBottomStackView.addArrangedSubview(button)
+            }
+        }
+        
+        [rowTopStackView, rowBottomStackView].forEach { contianerStackView.addArrangedSubview($0)
+        }
+        
+        view.addSubview(contianerStackView)
+        
+        contianerStackView.snp.makeConstraints { make in
+            make.top.equalTo(horizonDivider.snp.bottom).offset(72)
+            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-20)
+            make.width.equalTo(224)
+            make.height.equalTo(108)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configHeiraachy()
         configLayout()
         configView()
-        
-        [firstStackView, secondStackView, thirdStackView, lastStackView].forEach { horizonStackView.addArrangedSubview($0)}
-        
-        [EButton, IButton].forEach { firstStackView.addArrangedSubview($0) }
-        [SButton, NButton].forEach { secondStackView.addArrangedSubview($0) }
-        [TButton, FButton].forEach { thirdStackView.addArrangedSubview($0) }
-        [JButton, PButton].forEach { lastStackView.addArrangedSubview($0) }
-        
+        setMBTILayout()
+    
         viewModel.closure = {
             self.validateStateLabel.text = self.viewModel.resultLabel
             self.validateStateLabel.textColor = self.viewModel.outputColor ? .allowedStateColor : .rejectStateColor
@@ -163,6 +135,14 @@ class CreateProfileViewController: UIViewController {
         profileImage.layer.cornerRadius = profileImage.frame.height / 2
 //        cameraIcon.layer.cornerRadius = cameraIcon.frame.height / 2
         
+    }
+    
+    @objc func selectedMBTI(_ sender: UICircleButton) {
+        var config = sender.configuration
+        config?.baseBackgroundColor = .systemBlue
+        config?.baseForegroundColor = .white
+        config?.background.strokeWidth = 0
+        sender.configuration = config
     }
     
     @objc func popButtonTapped() {
@@ -180,7 +160,6 @@ class CreateProfileViewController: UIViewController {
     }
 }
 
-
 extension CreateProfileViewController {
     private func configHeiraachy() {
         view.addSubview(profileImage)
@@ -191,7 +170,6 @@ extension CreateProfileViewController {
         view.addSubview(validateStateLabel)
         view.addSubview(mbtiTitleLabel)
         
-        view.addSubview(horizonStackView)
     }
     
     private func configLayout() {
@@ -201,7 +179,6 @@ extension CreateProfileViewController {
             make.centerX.equalToSuperview()
             make.size.equalTo(100)
         }
-        
 //        cameraIcon.snp.makeConstraints { make in
 //            make.size.equalTo(28)
 //            make.trailing.equalToSuperview().inset(8)
@@ -227,13 +204,6 @@ extension CreateProfileViewController {
         mbtiTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(horizonDivider.snp.bottom).offset(72)
             make.leading.leading.equalToSuperview().offset(20)
-        }
-        
-        horizonStackView.snp.makeConstraints { make in
-            make.top.equalTo(horizonDivider.snp.bottom).offset(72)
-            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-20)
-            make.width.equalTo(224)
-            make.height.equalTo(108)
         }
         
         completeButton.snp.makeConstraints { make in
