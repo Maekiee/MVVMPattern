@@ -9,6 +9,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
         
+        
+        
+        let nav = UINavigationController(rootViewController: OnboardingViewController())
+        
+        window?.rootViewController = nav
+        window?.makeKeyAndVisible()
+    }
+    
+    func changeRootViewController() {
         let tabBarController = UITabBarController()
         // 나이탭
         let ageVC = AgeViewController()
@@ -26,17 +35,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let currencyVC = CurrencyViewController()
         currencyVC.tabBarItem = UITabBarItem(title: "환율", image: UIImage(systemName: "sterlingsign.arrow.trianglehead.counterclockwise.rotate.90"), tag: 4)
         
-        let nav = UINavigationController(rootViewController: OnboardingViewController())
-        
         tabBarController.viewControllers = [ageVC, bmiVC, birthDayVC, wordCounterVC, currencyVC]
         tabBarController.tabBar.tintColor = .systemBlue
         tabBarController.tabBar.unselectedItemTintColor = .systemGray
         
-        
-        
-//        window?.rootViewController = tabBarController
-        window?.rootViewController = nav
-        window?.makeKeyAndVisible()
+        guard let window = self.window else { return }
+                
+        UIView.transition(with: window,
+                          duration: 0.5,
+                          options: .transitionCrossDissolve,
+                          animations: {
+            window.rootViewController = tabBarController
+        },
+                          completion: nil)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

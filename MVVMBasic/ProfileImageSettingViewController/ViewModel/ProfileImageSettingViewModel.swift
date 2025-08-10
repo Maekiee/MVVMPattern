@@ -9,12 +9,5 @@ class ProfileImageSettingViewModel {
             closure?()
         }
     }
-    
-    var selectedImage: String = "" {
-        didSet {
-            
-        }
-    }
-    
-    
+        
 }

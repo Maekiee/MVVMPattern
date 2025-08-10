@@ -5,12 +5,12 @@ enum MBTIType:String, CaseIterable {
     case E, S, T, J, I, N, F, P
     
     static var MBTIbtn: [UICircleButton] {
-       
+        
         MBTIType.allCases.map { item in
-           return UICircleButton(
-               title: item.rawValue,
-           )
-       }
+            return UICircleButton(
+                title: item.rawValue,
+            )
+        }
     }
 }
 
@@ -22,7 +22,7 @@ final class CreateProfileViewController: UIViewController {
         imageView.backgroundColor = .systemGray6
         imageView.layer.borderColor = UIColor.completeButtonColor.cgColor
         imageView.layer.borderWidth = 4
-        imageView.clipsToBounds = false
+        imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFill
         return imageView
@@ -58,18 +58,28 @@ final class CreateProfileViewController: UIViewController {
         return button
     }()
     
-  
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configHeiraachy()
         configLayout()
         configView()
         setMBTILayout()
-    
+        
         viewModel.closure = {
             self.validateStateLabel.text = self.viewModel.resultLabel
             self.validateStateLabel.textColor = self.viewModel.outputColor ? .allowedStateColor : .rejectStateColor
             self.profileImage.image = UIImage(named: self.viewModel.setImage)
+        }
+        
+        viewModel.validateAllValue = {
+            if self.viewModel.hasAllValue {
+                self.completeButton.backgroundColor = .completeButtonColor
+                self.completeButton.isUserInteractionEnabled = true
+            } else {
+                self.completeButton.backgroundColor = .disableButtonColor
+                self.completeButton.isUserInteractionEnabled = false
+            }
         }
         
         profileImage.image = UIImage(named: self.viewModel.setImage)
@@ -115,7 +125,7 @@ final class CreateProfileViewController: UIViewController {
                 rowBottomStackView.addArrangedSubview(button)
             }
         }
-    
+        
         [rowTopStackView, rowBottomStackView].forEach { contianerStackView.addArrangedSubview($0)
         }
         
@@ -151,6 +161,15 @@ final class CreateProfileViewController: UIViewController {
     @objc func textFieldDidChange(_ sender: UITextField) {
         viewModel.inputText = sender.text!
     }
+    
+    @objc func getStartButtonTapped() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let sceneDelegate = windowScene.delegate as? SceneDelegate else {
+            return
+        }
+        
+        sceneDelegate.changeRootViewController()
+    }
 }
 
 extension CreateProfileViewController {
@@ -181,12 +200,12 @@ extension CreateProfileViewController {
             make.horizontalEdges.equalToSuperview().inset(20)
             make.height.equalTo(1)
         }
-    
+        
         validateStateLabel.snp.makeConstraints { make in
             make.top.equalTo(horizonDivider.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview().inset(30)
         }
-         
+        
         mbtiTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(horizonDivider.snp.bottom).offset(72)
             make.leading.leading.equalToSuperview().offset(20)
@@ -209,6 +228,7 @@ extension CreateProfileViewController {
             action: #selector(popButtonTapped))
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(pushTapped))
         profileImage.addGestureRecognizer(tapGesture)
+        completeButton.addTarget(self, action: #selector(getStartButtonTapped), for: .touchUpInside)
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
