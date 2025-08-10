@@ -6,7 +6,6 @@ class ProfileImageCollectionViewCell: UICollectionViewCell {
     
     let profileImage: UIImageView = {
         let imageView = UIImageView()
-//        imageView.layer.borderColor = UIColor.completeButtonColor.cgColor
         imageView.layer.borderWidth = 2
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
@@ -31,5 +30,15 @@ class ProfileImageCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func profileImageColor(isSelected: Bool) {
+        if isSelected {
+            profileImage.layer.borderColor = UIColor.completeButtonColor.cgColor
+            profileImage.layer.borderWidth = 4
+        } else {
+            profileImage.layer.borderColor = UIColor.disableButtonColor.cgColor
+            profileImage.layer.borderWidth = 2
+        }
     }
 }

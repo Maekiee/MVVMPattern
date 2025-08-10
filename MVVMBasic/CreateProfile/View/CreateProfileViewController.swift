@@ -14,8 +14,8 @@ enum MBTIType:String, CaseIterable {
     }
 }
 
-class CreateProfileViewController: UIViewController {
-    let viewModel = CreateProfileViewModel()
+final class CreateProfileViewController: UIViewController {
+    private let viewModel = CreateProfileViewModel()
     
     private let profileImage: UIImageView = {
         let imageView = UIImageView()
@@ -24,18 +24,9 @@ class CreateProfileViewController: UIViewController {
         imageView.layer.borderWidth = 4
         imageView.clipsToBounds = false
         imageView.isUserInteractionEnabled = true
-        imageView.image = UIImage(named: "profile_12")
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
-//    let cameraIcon: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.image = UIImage(systemName: "camera.fill")
-//        imageView.tintColor = .white
-//        imageView.clipsToBounds = true
-//        imageView.contentMode = .scaleAspectFit
-//        imageView.backgroundColor = .completeButtonColor
-//        return imageView
-//    }()
     private let textField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "닉네임을 입력해 주세요"
@@ -66,6 +57,29 @@ class CreateProfileViewController: UIViewController {
         button.backgroundColor = .disableButtonColor
         return button
     }()
+    
+  
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configHeiraachy()
+        configLayout()
+        configView()
+        setMBTILayout()
+    
+        viewModel.closure = {
+            self.validateStateLabel.text = self.viewModel.resultLabel
+            self.validateStateLabel.textColor = self.viewModel.outputColor ? .allowedStateColor : .rejectStateColor
+            self.profileImage.image = UIImage(named: self.viewModel.setImage)
+        }
+        
+        profileImage.image = UIImage(named: self.viewModel.setImage)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        profileImage.layer.cornerRadius = profileImage.frame.height / 2
+    }
+    
     private func setMBTILayout() {
         let mbtiButtons = MBTIType.MBTIbtn
         
@@ -114,25 +128,6 @@ class CreateProfileViewController: UIViewController {
             make.height.equalTo(108)
         }
     }
-  
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configHeiraachy()
-        configLayout()
-        configView()
-        setMBTILayout()
-    
-        viewModel.closure = {
-            self.validateStateLabel.text = self.viewModel.resultLabel
-            self.validateStateLabel.textColor = self.viewModel.outputColor ? .allowedStateColor : .rejectStateColor
-        }
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        profileImage.layer.cornerRadius = profileImage.frame.height / 2
-//        cameraIcon.layer.cornerRadius = cameraIcon.frame.height / 2
-    }
     
     
     @objc func selectedMBTI(_ sender: UICircleButton) {
@@ -145,6 +140,11 @@ class CreateProfileViewController: UIViewController {
     
     @objc func pushTapped() {
         let vc = ProfileImageSettingViewController()
+        vc.imageNamed = viewModel.setImage
+        vc.isSelectedImage = { image in
+            self.viewModel.setImage = image
+            
+        }
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -156,7 +156,6 @@ class CreateProfileViewController: UIViewController {
 extension CreateProfileViewController {
     private func configHeiraachy() {
         view.addSubview(profileImage)
-//        profileImage.addSubview(cameraIcon)
         view.addSubview(completeButton)
         view.addSubview(textField)
         view.addSubview(horizonDivider)
@@ -166,17 +165,11 @@ extension CreateProfileViewController {
     }
     
     private func configLayout() {
-        
         profileImage.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(40)
             make.centerX.equalToSuperview()
             make.size.equalTo(100)
         }
-//        cameraIcon.snp.makeConstraints { make in
-//            make.size.equalTo(28)
-//            make.trailing.equalToSuperview().inset(8)
-//            make.bottom.equalToSuperview().offset(-8)
-//        }
         
         textField.snp.makeConstraints { make in
             make.top.equalTo(profileImage.snp.bottom).offset(32)
@@ -204,7 +197,6 @@ extension CreateProfileViewController {
             make.bottom.equalToSuperview().inset(60)
             make.height.equalTo(44)
         }
-        
     }
     
     private func configView() {

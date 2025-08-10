@@ -2,7 +2,10 @@ import UIKit
 import SnapKit
 
 class ProfileImageSettingViewController: UIViewController {
-    let imageList = [
+    let viewModel = ProfileImageSettingViewModel()
+    var isSelectedImage: ((String) -> Void)?
+    
+    let imageList:[String] = [
         "profile_1",
         "profile_2",
         "profile_3",
@@ -29,7 +32,7 @@ class ProfileImageSettingViewController: UIViewController {
     
     lazy var collectionView: UICollectionView = {
         let layout = setCellLayout()
-    
+        
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -37,29 +40,42 @@ class ProfileImageSettingViewController: UIViewController {
         return collectionView
     }()
     
+    var imageNamed: String?
     
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configHeiraachy()
         configLayout()
         configView()
         
-        profileImage.image = UIImage(named: "profile_1")
-
+        
+        guard let imageString = imageNamed else { return }
+        viewModel.inputSelectedImage = imageString
+        profileImage.image = UIImage(named: imageString)
+        
+        viewModel.closure = {
+            guard let imageString = self.viewModel.inputSelectedImage else { return }
+            self.profileImage.image = UIImage(named: imageString)
+            self.collectionView.reloadData()
+        }
+        
+        
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
         profileImage.layer.cornerRadius = profileImage.frame.height / 2
-        
-            }
+    }
     
     @objc func popButtonTapped() {
+        guard let selectedImage = self.viewModel.inputSelectedImage else { return }
+        isSelectedImage?(selectedImage)
         navigationController?.popViewController(animated: true)
     }
-
+    
+    
 }
 
 
@@ -70,8 +86,12 @@ extension ProfileImageSettingViewController: UICollectionViewDelegate, UICollect
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImageCollectionViewCell.identifier, for: indexPath) as! ProfileImageCollectionViewCell
+        
         let item = imageList[indexPath.item]
         cell.profileImage.image = UIImage(named: item)
+        let isSelected = viewModel.inputSelectedImage == imageList[indexPath.item]
+        cell.profileImageColor(isSelected: isSelected)
+        
         return cell
     }
     
@@ -82,10 +102,16 @@ extension ProfileImageSettingViewController: UICollectionViewDelegate, UICollect
         layout.itemSize = CGSize(width: cellWidth, height: cellWidth)
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 8
-
+        
         layout.scrollDirection = .vertical
         return layout
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(imageList[indexPath.item])
+        viewModel.inputSelectedImage = imageList[indexPath.item]
+    }
+    
     
 }
 

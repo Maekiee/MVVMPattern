@@ -9,34 +9,47 @@ enum UserNameError: Error {
 }
 
 
+// 이미지, 엠비티아이, 닉네임 값이 모두 있으면 true 하나라도 없으면 falseㅅ
 class CreateProfileViewModel {
     var closure: (() -> Void)?
     
+    var setImage: String = "profile_12" {
+        didSet {
+            closure?()
+        }
+    }
+    
+    // 닉네임 결과 상태
     var resultLabel: String = "" {
         didSet {
             closure?()
         }
     }
     
-    var selectedButtonTag: UICircleButton? {
+    // 닉네임 값 받기
+    var inputText: String? = "" {
         didSet {
-            changeButtonColor()
+            checkUserName()
         }
     }
     
-    var mbtiButtonDict: [Int: UICircleButton] = [:]
-    
+    // 상태 레이블 컬러 변경
     var outputColor: Bool = false {
         didSet {
             closure?()
         }
     }
     
-    var inputText: String? = "" {
+    // 클릭한 버튼 변경
+    var selectedButtonTag: UICircleButton? {
         didSet {
-            checkUserName()
+            changeButtonColor()
         }
     }
+    
+    // 버튼과 테그 값 받아오는곳
+    var mbtiButtonDict: [Int: UICircleButton] = [:]
+    
     
     private func changeButtonColor() {
         guard let button = selectedButtonTag else { return }
@@ -54,9 +67,10 @@ class CreateProfileViewModel {
     
     private func checkUserName() {
         do {
-            let _ = try validateUserName()
+            let userName = try validateUserName()
             resultLabel = "사용할 수 있는 닉네임이에요"
             outputColor = true
+            print(userName)
         } catch {
             switch error {
             case .empty:
@@ -91,8 +105,6 @@ class CreateProfileViewModel {
             print("카운터 에러")
             throw .range
         }
-        
-//        카운트가 2 초과 10 이하 이지 않으면 에러
         
         guard text.rangeOfCharacter(from: .decimalDigits) == nil else {
             print("숫자 에러")
