@@ -11,8 +11,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let nav = UINavigationController(rootViewController: OnboardingViewController())
         
-        ////////////////////////////////
+        //////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////
         let tabBarController = UITabBarController()
+        
+        
         // 나이탭
         let ageVC = AgeViewController()
         ageVC.tabBarItem = UITabBarItem(title: "나이", image: UIImage(systemName: "person.fill"), tag: 0)
@@ -29,7 +32,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let currencyVC = CurrencyViewController()
         currencyVC.tabBarItem = UITabBarItem(title: "환율", image: UIImage(systemName: "sterlingsign.arrow.trianglehead.counterclockwise.rotate.90"), tag: 4)
         
-        tabBarController.viewControllers = [ageVC, bmiVC, birthDayVC, wordCounterVC, currencyVC]
+        // 지도탭
+        let mapVC = MapViewController()
+        mapVC.tabBarItem = UITabBarItem(title: "지도", image: UIImage(systemName: "map.circle"), tag: 5)
+        
+       
+        
+        tabBarController.viewControllers = [ageVC, bmiVC, birthDayVC, wordCounterVC, currencyVC, mapVC]
         tabBarController.tabBar.tintColor = .systemBlue
         tabBarController.tabBar.unselectedItemTintColor = .systemGray
         
