@@ -47,14 +47,15 @@ class CurrencyViewController: UIViewController {
         setupConstraints()
         setupActions()
         
-        viewModel.closure = {
-            self.resultLabel.text = self.viewModel.resultOutput
+        viewModel.outputResultText.bind { [weak self] value in
+            guard let self = self else { return }
+            resultLabel.text = value
         }
         
     }
      
     @objc private func convertButtonTapped() {
-        viewModel.convertButtonTapped = amountTextField.text!
+        viewModel.covertButtonClicked.value = amountTextField.text!
     }
 }
 

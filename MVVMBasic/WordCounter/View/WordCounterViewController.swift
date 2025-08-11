@@ -34,6 +34,8 @@ class WordCounterViewController: UIViewController {
             countLabel.text = value
         }
     }
+    
+    
 }
  
 extension WordCounterViewController: UITextViewDelegate {

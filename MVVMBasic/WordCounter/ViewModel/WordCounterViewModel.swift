@@ -7,10 +7,10 @@ class WordCounterViewModel {
     var outputText: Observable<String> = Observable("")
     
     init() {
-        updateCharacter.bind { [weak self] value in
-            guard let self = self else { return }
-            updateCharacterCount()
-        }
+//        updateCharacter.bind { [weak self] value in
+//            guard let self = self else { return }
+//            updateCharacterCount()
+//        }
     }
     
     private func updateCharacterCount() {

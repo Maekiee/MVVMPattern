@@ -2,30 +2,35 @@ import Foundation
 
 
 class CurrencyViewModel {
-    var closure: (() -> Void)?
     
-    var resultOutput: String = "" {
-        didSet {
-            closure?()
-        }
-    }
+    var outputResultText: Observable<String> = Observable("")
+    var covertButtonClicked: Observable<String> = Observable("")
     
-    var convertButtonTapped: String? =  ""{
-        didSet {
+    init() {
+        covertButtonClicked.bind { [weak self] value in
+            guard let self = self else { return }
             convertCurrency()
         }
     }
     
+    
     private func convertCurrency() {
-        guard let amountText = convertButtonTapped,
-              let amount = Double(amountText) else {
-            resultOutput = "올바른 금액을 입력해주세요"
-            return
+
+        
+        if covertButtonClicked.value != "" {
+            guard let amount = Double(covertButtonClicked.value) else {
+                outputResultText.value = "올바른 금액을 입력해주세요"
+                return
+            }
+            
+            let exchangeRate = 1350.0 // 실제 환율 데이터로 대체 필요
+            let convertedAmount = amount / exchangeRate
+            outputResultText.value = String(format: "%.2f USD (약 $%.2f)", convertedAmount, convertedAmount)
+        } else {
+            outputResultText.value = "올바른 금액을 입력해주세요"
         }
         
-        let exchangeRate = 1350.0 // 실제 환율 데이터로 대체 필요
-        let convertedAmount = amount / exchangeRate
-        resultOutput = String(format: "%.2f USD (약 $%.2f)", convertedAmount, convertedAmount)
+       
     }
     
 }
