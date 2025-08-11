@@ -36,30 +36,35 @@ class BMIViewController: UIViewController {
         super.viewDidLoad()
         configureHierarchy()
         configureLayout()
-        customCornerGeneric(resultButton)
-        textFieldGeneric(heightTextField)
-        textFieldGeneric(weightTextField)
+        configView()
         
-        resultButton.addTarget(self, action: #selector(resultButtonTapped), for: .touchUpInside)
-        
-        viewModel.closureText = {
-            self.resultLabel.text = self.viewModel.resultOutputText
-           
+        viewModel.outputResultText.bind { [weak self] value in
+            self?.resultLabel.text = value
         }
         
-//        viewModel.closureAlert = {
-//            self.showAlert(tip: self.viewModel.alertMessage)
-//        }
     }
     
-    func configureHierarchy() {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
+    @objc func resultButtonTapped() {
+        view.endEditing(true)
+        viewModel.inputHeightText.value = heightTextField.text!
+        viewModel.inputWeightText.value = weightTextField.text!
+    }
+}
+
+
+extension BMIViewController {
+    private func configureHierarchy() {
         view.addSubview(heightTextField)
         view.addSubview(weightTextField)
         view.addSubview(resultButton)
         view.addSubview(resultLabel)
     }
     
-    func configureLayout() {
+    private func configureLayout() {
         heightTextField.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.horizontalEdges.equalToSuperview().inset(20)
@@ -85,13 +90,10 @@ class BMIViewController: UIViewController {
         }
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
-    }
-    
-    @objc func resultButtonTapped() {
-        view.endEditing(true)
-        viewModel.heightInputText = heightTextField.text
-        viewModel.weightInputText = weightTextField.text
+    private func configView() {
+        customCornerGeneric(resultButton)
+        textFieldGeneric(heightTextField)
+        textFieldGeneric(weightTextField)
+        resultButton.addTarget(self, action: #selector(resultButtonTapped), for: .touchUpInside)
     }
 }
