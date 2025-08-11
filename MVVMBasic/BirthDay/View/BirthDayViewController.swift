@@ -57,14 +57,11 @@ class BirthDayViewController: UIViewController {
         super.viewDidLoad()
         configureHierarchy()
         configureLayout()
+        configView()
         
-        resultButton.addTarget(self, action: #selector(resultButtonTapped), for: .touchUpInside)
-        textFieldGeneric(yearTextField)
-        textFieldGeneric(monthTextField)
-        textFieldGeneric(dayTextField)
-        
-        viewModel.closure = {
-            self.resultLabel.text = self.viewModel.resultOutputString
+        viewModel.outputResultText.bind { [weak self] value in
+            guard let self = self else { return }
+            resultLabel.text = value
         }
     }
     
@@ -74,10 +71,10 @@ class BirthDayViewController: UIViewController {
     
     @objc func resultButtonTapped() {
         view.endEditing(true)
-        viewModel.clickTapped = [
-            yearTextField.text,
-            monthTextField.text,
-            dayTextField.text,
+        viewModel.inputTapped.value = [
+            yearTextField.text!,
+            monthTextField.text!,
+            dayTextField.text!,
         ]
     }
     
@@ -144,5 +141,13 @@ extension BirthDayViewController {
             make.horizontalEdges.equalToSuperview().inset(20)
             make.height.equalTo(44)
         }
+    }
+    
+    func configView() {
+        textFieldGeneric(yearTextField)
+        textFieldGeneric(monthTextField)
+        textFieldGeneric(dayTextField)
+        
+        resultButton.addTarget(self, action: #selector(resultButtonTapped), for: .touchUpInside)
     }
 }
