@@ -36,8 +36,9 @@ class AgeViewController: UIViewController {
         customCornerGeneric(resultButton)
         textFieldGeneric(textField)
         
-        viewModel.closureText = {
-            self.label.text = self.viewModel.ageOutputText
+        viewModel.outputText.bind { [weak self] value in
+            guard let self else { return }
+            label.text = value
         }
     }
     
@@ -47,7 +48,8 @@ class AgeViewController: UIViewController {
     }
     
     @objc func resultButtonTapped() {
-        viewModel.ageInputField = textField.text!
+        
+        viewModel.inputText.value = textField.text!
         
         view.endEditing(true)
     }

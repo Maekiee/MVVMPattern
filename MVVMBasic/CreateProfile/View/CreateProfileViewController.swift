@@ -55,6 +55,7 @@ final class CreateProfileViewController: UIViewController {
         button.layer.cornerRadius = 22
         button.tintColor = .white
         button.backgroundColor = .disableButtonColor
+        button.isUserInteractionEnabled = false
         return button
     }()
     
@@ -166,7 +167,6 @@ final class CreateProfileViewController: UIViewController {
               let sceneDelegate = windowScene.delegate as? SceneDelegate else {
             return
         }
-        
         sceneDelegate.changeRootViewController()
     }
 }
