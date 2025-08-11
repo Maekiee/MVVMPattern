@@ -12,7 +12,6 @@ class WordCounterViewController: UIViewController {
         textView.textContainerInset = UIEdgeInsets(top: 12, left: 8, bottom: 12, right: 8)
         return textView
     }()
-    
     private let countLabel: UILabel = {
         let label = UILabel()
         label.text = "현재까지 0글자 작성중"
@@ -21,7 +20,7 @@ class WordCounterViewController: UIViewController {
         label.textColor = .systemBlue
         return label
     }()
-    
+
     let viewModel = WordCounterViewModel()
      
     override func viewDidLoad() {
@@ -30,15 +29,16 @@ class WordCounterViewController: UIViewController {
         setupConstraints()
         setupTextView()
         
-        viewModel.closure = {
-            self.countLabel.text = self.viewModel.resultOutputText
+        viewModel.outputText.bind { [weak self] value in
+            guard let self = self else { return }
+            countLabel.text = value
         }
     }
 }
  
 extension WordCounterViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
-        viewModel.updateCharacter = textView.text
+        viewModel.updateCharacter.value = textView.text
     }
 }
 

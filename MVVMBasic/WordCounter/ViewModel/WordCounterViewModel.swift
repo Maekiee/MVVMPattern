@@ -2,22 +2,19 @@ import Foundation
 
 
 class WordCounterViewModel {
-    var closure: (() -> Void)?
     
-    var resultOutputText: String = "" {
-        didSet {
-            closure?()
-        }
-    }
+    var updateCharacter: Observable<String> = Observable("")
+    var outputText: Observable<String> = Observable("")
     
-    var updateCharacter: String = "" {
-        didSet {
+    init() {
+        updateCharacter.bind { [weak self] value in
+            guard let self = self else { return }
             updateCharacterCount()
         }
     }
     
     private func updateCharacterCount() {
-        let count = updateCharacter.count
-        resultOutputText = "현재까지 \(count)글자 작성중"
+        let count = updateCharacter.value.count
+        outputText.value = "현재까지 \(count)글자 작성중"
     }
 }
